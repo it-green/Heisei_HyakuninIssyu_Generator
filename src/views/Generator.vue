@@ -10,3 +10,7 @@ import { Component, Vue } from 'vue-property-decorator';
 export default class Generator extends Vue {
 }
 </script>
+
+<style lang="sass">
+@import '~bulma/bulma'
+</style>

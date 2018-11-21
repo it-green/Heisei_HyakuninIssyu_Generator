@@ -1,5 +1,6 @@
 <template lang="pug">
     #app
+
         #nav
             router-link(to="/") home
             router-link(to="/about") about
@@ -8,8 +9,8 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-
 @Component
+
 export default class App extends Vue {}
 </script>
 

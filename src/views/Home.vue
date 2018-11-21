@@ -3,6 +3,7 @@
         p(style="white-space: pre-line;") {{ msg }}
         br
         textarea(v-model="msg" type="text")
+
 </template>
 
 <script lang="ts">
@@ -15,6 +16,10 @@ import Generator from '@/views/Generator.vue';
   },
 })
 export default class Home extends Vue {
-    public msg = 'あああああああ';
+    public msg = '';
 }
 </script>
+
+<style lamg="sass">
+
+</style>
