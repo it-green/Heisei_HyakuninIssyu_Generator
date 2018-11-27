@@ -4,14 +4,23 @@
         #nav
             router-link(to="/") home
             router-link(to="/about") about
+            router-link(to="/Generator") generator
             router-view
+        #Write
+            WriteArea
+
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-@Component
+    import { Component, Vue } from 'vue-property-decorator';
+    import WriteArea from '@/components/WriteArea.vue';
+    @Component({
+        components: {
+            WriteArea,
+        },
+    })
 
-export default class App extends Vue {}
+    export default class App extends Vue {}
 </script>
 
 <style lang="sass">
