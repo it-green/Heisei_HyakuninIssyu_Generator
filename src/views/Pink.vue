@@ -1,7 +1,6 @@
 <template lang="pug">
     #Generator
-        .sheet
-            img.sheet(alt="Image1" src="../assets/red.png")
+        img.sheet(alt="This is pink sheet" src="../assets/pink.png")
 
 </template>
 

@@ -2,9 +2,8 @@
     #app
 
         #nav
-            router-link(to="/") home
-            router-link(to="/about") about
-            router-link(to="/Generator") generator
+            router-link(to="/PinkSheet") Pink
+            router-link(to="/OrangeSheet") Orange
             router-view
         #Write
             WriteArea
