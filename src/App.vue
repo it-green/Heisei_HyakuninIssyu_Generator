@@ -1,16 +1,25 @@
 <template lang="pug">
     #app
+
         #nav
-            router-link(to="/") home
-            router-link(to="/about") about
+            router-link(to="/PinkSheet") Pink
+            router-link(to="/OrangeSheet") Orange
             router-view
+        #Write
+            WriteArea
+
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+    import { Component, Vue } from 'vue-property-decorator';
+    import WriteArea from '@/components/WriteArea.vue';
+    @Component({
+        components: {
+            WriteArea,
+        },
+    })
 
-@Component
-export default class App extends Vue {}
+    export default class App extends Vue {}
 </script>
 
 <style lang="sass">
