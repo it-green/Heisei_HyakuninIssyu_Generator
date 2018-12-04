@@ -1,11 +1,6 @@
 <template lang="pug">
     #app
-        #nav
-            router-link(to="/PinkSheet") Pink
-            router-link(to="/OrangeSheet") Orange
-            router-view
-        #Write
-            WriteArea
+        WriteArea
 </template>
 
 <script lang="ts">
