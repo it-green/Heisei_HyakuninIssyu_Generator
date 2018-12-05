@@ -1,28 +1,32 @@
 <template lang="pug">
-#app
-    #Write
+    #app
         WriteArea
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import WriteArea from '@/components/WriteArea.vue';
+import Buefy from 'buefy';
+Vue.use(Buefy);
+
 @Component({
     components: {
         WriteArea,
     },
 })
-export default class App extends Vue {
-    private test = '古池や';
-}
+export default class App extends Vue {}
 </script>
 
+<style lang='rscss'>
+@import 'all';
+</style>
+
 <style lang="sass">
+@import 'variable';
 #app
   font-family: 'Avenir', Helvetica, Arial, sans-serif
   -webkit-font-smoothing: antialiased
   -moz-osx-font-smoothing: grayscale
-  text-align: center
   color: #2c3e50
 
 #nav
