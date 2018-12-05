@@ -1,9 +1,10 @@
 <template lang="pug">
 .vue-write-area
     section.section
-        b-field(label='5' horizontal)
-            b-input(type='text' v-model='upperOne' maxlength='5' @blur='onBlur')
-        button.button.is-success(@click='$dialog.alert("test")') ボタン
+        p {{ upperOne }}
+        b-field(label="5" horizontal)
+            b-input(type="text" v-model="upperOne" maxlength="5" @blur="first")
+        button.button.is-success(@click="$dialog.alert('test')") ボタン
 </template>
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
@@ -13,15 +14,18 @@ import LoadUtil from '@/utils/LoadUtil';
 
 @Component
 export default class WriteArea extends Vue {
-    private upperOne = 'この冬は';
+    private upperOne = '給食の';
+    private upperTwo = '懲戒免職';
     private kuroshiroInstance = new Kuroshiro();
 
-    private async onBlur() {
-        const result = await this.kuroshiroInstance.convert('感じ取れたら手を繋ごう、重なるのは人生のライン and レミリア最高！', { to: 'hiragana' });
+    private async first() {
+        const result = await this.kuroshiroInstance.convert(this.upperOne, { to: 'hiragana' });
+        const count = result.length;
+        console.log(count);
         console.log(result);
     }
 
-    private async mounted() {
+    private mounted() {
         LoadUtil.loading(this.$loading, async () => {
             await this.kuroshiroInstance.init(new KuromojiAnalyzer({dictPath: '/dict'}));
             console.log('kuroshiro ready');
