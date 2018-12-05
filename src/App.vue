@@ -1,25 +1,20 @@
 <template lang="pug">
-    #app
-
-        #nav
-            router-link(to="/PinkSheet") Pink
-            router-link(to="/OrangeSheet") Orange
-            router-view
-        #Write
-            WriteArea
-
+#app
+    #Write
+        WriteArea
 </template>
 
 <script lang="ts">
-    import { Component, Vue } from 'vue-property-decorator';
-    import WriteArea from '@/components/WriteArea.vue';
-    @Component({
-        components: {
-            WriteArea,
-        },
-    })
-
-    export default class App extends Vue {}
+import { Component, Vue } from 'vue-property-decorator';
+import WriteArea from '@/components/WriteArea.vue';
+@Component({
+    components: {
+        WriteArea,
+    },
+})
+export default class App extends Vue {
+    private test = '古池や';
+}
 </script>
 
 <style lang="sass">
