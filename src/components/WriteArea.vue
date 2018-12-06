@@ -2,8 +2,18 @@
 .vue-write-area
     section.section
         p {{ upperOne }}
+
         b-field(label="5" horizontal)
             b-input(type="text" v-model="upperOne" maxlength="5" @blur="first")
+        b-field(label="5" horizontal)
+            b-input(type="text" v-model="upperTwo" maxlength="7" @blur="second")
+        b-field(label="test" message="音の数が5を超えています" type="is-danger")
+            b-input(placeholder="Error")
+
+        p#takeMe(align="right") 属性をとって欲しい!
+
+        //- このボタンを押すと#takeMeのalignがcenterになる。
+        button.button(@click="takeAttribute()") 属性を取る
         button.button.is-success(@click="$dialog.alert('test')") ボタン
 </template>
 <script lang="ts">
@@ -19,10 +29,22 @@ export default class WriteArea extends Vue {
     private kuroshiroInstance = new Kuroshiro();
 
     private async first() {
-        const result = await this.kuroshiroInstance.convert(this.upperOne, { to: 'hiragana' });
-        const count = result.length;
-        console.log(count);
-        console.log(result);
+        const songOne = await this.kuroshiroInstance.convert(this.upperOne, { to: 'hiragana' });
+        const countOne = songOne.length;
+        console.log(songOne);
+        console.log(countOne);
+    }
+
+    private async second() {
+        const songTwo = await this.kuroshiroInstance.convert(this.upperTwo, { to: 'hiragana' });
+        const countTwo = songTwo.length;
+        console.log(songTwo);
+        console.log(countTwo);
+    }
+    // HTMLの属性の書き換えの例
+    private takeAttribute() {
+        const getElem: HTMLElement | any  = document.getElementById('takeMe');
+        const check = getElem.setAttribute('align', 'cente');
     }
 
     private mounted() {
