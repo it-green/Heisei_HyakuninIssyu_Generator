@@ -32,15 +32,11 @@ export default class WriteArea extends Vue {
 
     private async first() {
         const songOne = await this.kuroshiroInstance.convert(this.upperOne, { to: 'hiragana' });
+        // ここで正規表現を参照
         const reRef = new RegExp(this.re, 'g');
+        // 正規表現を排除
         const replaceRe = songOne.replace(reRef , '');
         const countOne = replaceRe.length;
-        // ここで文字数が多い時にis-dangerを飛ばす。
-        // if (countOne >= 5) {
-        //     const getElem: HTMLElement | any = document.getElementById('sentenceOne');
-        //     const check = getElem.setAttribute('type' , 'is-danger');
-        //     console.log('文字数が多いよ');
-        // }
         console.log(songOne);
         console.log(countOne);
     }
