@@ -3,14 +3,14 @@
     section.section
         p {{ upperOne }}
 
-        b-field(label="5" horizontal)
+        b-field#sentenceOne(label="5" horizontal type="")
             b-input(type="text" v-model="upperOne" maxlength="5" @blur="first")
         b-field(label="5" horizontal)
             b-input(type="text" v-model="upperTwo" maxlength="7" @blur="second")
         b-field(label="test" message="音の数が5を超えています" type="is-danger")
-            b-input(placeholder="Error")
+            b-input
 
-        p#takeMe(align="right") 属性をとって欲しい!
+        p#takeMe(align="") 属性をとって欲しい!
 
         //- このボタンを押すと#takeMeのalignがcenterになる。
         button.button(@click="takeAttribute()") 属性を取る
@@ -25,12 +25,22 @@ import LoadUtil from '@/utils/LoadUtil';
 @Component
 export default class WriteArea extends Vue {
     private upperOne = '給食の';
-    private upperTwo = '懲戒免職';
+    private upperTwo = 'キャン攻撃';
+    // private re = /.ぁ.ぃ.ぅ.ぇ.ぉ.っ.ゃ.ゅ.ょ.ゎ/;
+    private re = /(ぁ|ぃ|ぅ|ぇ|ぉ|っ|ゃ|ゅ|ょ|ゎ|ァ|ィ|ゥ|ェ|ォ|ッ|ャ|ュ|ョ|ヮ)/;
     private kuroshiroInstance = new Kuroshiro();
 
     private async first() {
         const songOne = await this.kuroshiroInstance.convert(this.upperOne, { to: 'hiragana' });
-        const countOne = songOne.length;
+        const reRef = new RegExp(this.re, 'g');
+        const replaceRe = songOne.replace(reRef , '');
+        const countOne = replaceRe.length;
+        // ここで文字数が多い時にis-dangerを飛ばす。
+        // if (countOne >= 5) {
+        //     const getElem: HTMLElement | any = document.getElementById('sentenceOne');
+        //     const check = getElem.setAttribute('type' , 'is-danger');
+        //     console.log('文字数が多いよ');
+        // }
         console.log(songOne);
         console.log(countOne);
     }
@@ -44,7 +54,7 @@ export default class WriteArea extends Vue {
     // HTMLの属性の書き換えの例
     private takeAttribute() {
         const getElem: HTMLElement | any  = document.getElementById('takeMe');
-        const check = getElem.setAttribute('align', 'cente');
+        const check = getElem.setAttribute('align', 'center');
     }
 
     private mounted() {
