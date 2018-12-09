@@ -3,8 +3,10 @@
     section.section
         p {{ upperOne }}
 
-        b-field#sentenceOne(label="5" horizontal type="")
-            b-input(type="text" v-model="upperOne" maxlength="5" @blur="first")
+        b-checkbox(v-model="test")
+
+        b-field#sentenceOne(label="5" horizontal  :type="{ 'is-danger': test }")
+            b-input#test(type="text" v-model="upperOne"  maxlength="5" @blur="first")
         b-field(label="5" horizontal)
             b-input(type="text" v-model="upperTwo" maxlength="7" @blur="second")
         b-field(label="test" message="音の数が5を超えています" type="is-danger")
@@ -26,7 +28,7 @@ import LoadUtil from '@/utils/LoadUtil';
 export default class WriteArea extends Vue {
     private upperOne = '給食の';
     private upperTwo = 'キャン攻撃';
-    // private re = /.ぁ.ぃ.ぅ.ぇ.ぉ.っ.ゃ.ゅ.ょ.ゎ/;
+    private test = false;
     private re = /(ぁ|ぃ|ぅ|ぇ|ぉ|っ|ゃ|ゅ|ょ|ゎ|ァ|ィ|ゥ|ェ|ォ|ッ|ャ|ュ|ョ|ヮ)/;
     private kuroshiroInstance = new Kuroshiro();
 
@@ -39,11 +41,16 @@ export default class WriteArea extends Vue {
         const countOne = replaceRe.length;
         console.log(songOne);
         console.log(countOne);
+        if (countOne >= 5) {
+            console.log('音の数が多いよ');
+        }
     }
 
     private async second() {
         const songTwo = await this.kuroshiroInstance.convert(this.upperTwo, { to: 'hiragana' });
-        const countTwo = songTwo.length;
+        const reRef = new RegExp(this.re, 'g');
+        const replaceRe = songTwo.replace(reRef, '');
+        const countTwo = replaceRe.length;
         console.log(songTwo);
         console.log(countTwo);
     }
