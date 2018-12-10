@@ -2,10 +2,11 @@
 .vue-write-area
     section.section
         p {{ upperOne }}
+        p {{ upperTwo }}
 
-        b-field#sentenceOne(label="5" horizontal :type as any  ="{'is-danger': test}" )
+        b-field#sentenceOne(label="5" horizontal v-bind:type ="{'is-danger':checkUpperOne}")
             b-input#test(type="text" v-model="upperOne"  maxlength="5" @blur="first")
-        b-field(label="5" horizontal)
+        b-field(label="5" horizontal v-bind:type ="{'is-danger':checkUpperTwo}")
             b-input(type="text" v-model="upperTwo" maxlength="7" @blur="second")
         b-field(label="test" message="音の数が5を超えています" type="is-danger")
             b-input
@@ -13,7 +14,7 @@
         p#takeMe(align="") 属性をとって欲しい!
 
         //- このボタンを押すと#takeMeのalignがcenterになる。
-        button.button(@click="takeAttribute()") 属性を取る
+        button.button(@click="setAttribute()") 属性を取る
         button.button.is-success(@click="$dialog.alert('test')") ボタン
 </template>
 <script lang="ts">
@@ -24,9 +25,10 @@ import LoadUtil from '@/utils/LoadUtil';
 
 @Component
 export default class WriteArea extends Vue {
-    private upperOne = '給食の';
-    private upperTwo = 'キャン攻撃';
-    private test = false;
+    private upperOne = '千早ぶる';
+    private upperTwo = '神代もきかず';
+    private checkUpperOne = false;
+    private checkUpperTwo = false;
     private re = /(ぁ|ぃ|ぅ|ぇ|ぉ|っ|ゃ|ゅ|ょ|ゎ|ァ|ィ|ゥ|ェ|ォ|ッ|ャ|ュ|ョ|ヮ)/;
     private kuroshiroInstance = new Kuroshiro();
 
@@ -41,9 +43,9 @@ export default class WriteArea extends Vue {
         console.log(countOne);
         // 音の数が多い時にはb-fiedの属性を'is-danger'にする
         if (countOne > 5) {
-            this.test = true;
+        this.checkUpperOne = true;
         } else {
-            this.test = false;
+        this.checkUpperOne = false;
         }
     }
 
@@ -54,6 +56,11 @@ export default class WriteArea extends Vue {
         const countTwo = replaceRe.length;
         console.log(songTwo);
         console.log(countTwo);
+        if (countTwo > 7) {
+        this.checkUpperTwo = true;
+        } else {
+        this.checkUpperTwo = false;
+        }
     }
     // HTMLの属性の書き換えの例
     private takeAttribute() {
