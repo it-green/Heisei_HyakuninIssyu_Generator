@@ -3,9 +3,7 @@
     section.section
         p {{ upperOne }}
 
-        b-checkbox(v-model="test")
-
-        b-field#sentenceOne(label="5" horizontal  :type="{ 'is-danger': test }")
+        b-field#sentenceOne(label="5" horizontal :type as any  ="{'is-danger': test}" )
             b-input#test(type="text" v-model="upperOne"  maxlength="5" @blur="first")
         b-field(label="5" horizontal)
             b-input(type="text" v-model="upperTwo" maxlength="7" @blur="second")
@@ -19,7 +17,7 @@
         button.button.is-success(@click="$dialog.alert('test')") ボタン
 </template>
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Vue, Prop } from 'vue-property-decorator';
 import Kuroshiro from 'kuroshiro';
 import KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji';
 import LoadUtil from '@/utils/LoadUtil';
@@ -41,8 +39,11 @@ export default class WriteArea extends Vue {
         const countOne = replaceRe.length;
         console.log(songOne);
         console.log(countOne);
-        if (countOne >= 5) {
-            console.log('音の数が多いよ');
+        // 音の数が多い時にはb-fiedの属性を'is-danger'にする
+        if (countOne > 5) {
+            this.test = true;
+        } else {
+            this.test = false;
         }
     }
 
