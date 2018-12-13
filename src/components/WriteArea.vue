@@ -3,14 +3,25 @@
     section.section
         p {{ firstSong }}
         p {{ secoundSong }}
+        p {{ thirdSong }}
+        p {{ fourthSong }}
+        p {{ fifthSong }}
 
-        //- example2: メソッド（関数）を利用。この場合stringを返り値とするメソッド
-        b-field(label="初句" horizontal  :type="returnFieldTypeOne"  :message="{'音の数が多いです': returnFieldTypeOne}")
-            b-input(type="text" v-model="firstSong"  maxlength="5" @blur="first")
-        b-field(label="二句" horizontal :type="returnFieldTypeTwo"  :message="{'音の数が多いです': returnFieldTypeTwo}")
-            b-input(type="text" v-model="secoundSong" maxlength="7" @blur="second")
-        b-field(label="三句" horizontal  :type="returnFieldTypeThree"  :message="{'音の数が多いです': returnFieldTypeThree}")
-            b-input(type="text" v-model="thirdSong" maxlength="5" @blur="third")
+        p.title 上の句
+        div.columns
+            //- example2: メソッド（関数）を利用。この場合stringを返り値とするメソッド
+            b-field.column(label="初句" horizontal  :type="returnFieldTypeOne"  :message="{'音の数が多いです': returnFieldTypeOne}")
+                b-input(type="text" v-model="firstSong"  maxlength="5" @blur="first")
+            b-field.column(label="二句" horizontal :type="returnFieldTypeTwo"  :message="{'音の数が多いです': returnFieldTypeTwo}")
+                b-input(type="text" v-model="secoundSong" maxlength="7" @blur="second")
+            b-field.column(label="三句" horizontal  :type="returnFieldTypeThree"  :message="{'音の数が多いです': returnFieldTypeThree}")
+                b-input(type="text" v-model="thirdSong" maxlength="5" @blur="third")
+        p.title 下の句
+        div.columns
+            b-field.column(label="四句" horizontal :type="returnFieldTypeFour"  :message="{'音の数が多いです': returnFieldTypeFour}")
+                b-input(type="text" v-model="fourthSong" maxlength="7" @blur="fourth")
+            b-field.column(label="結び句" horizontal :type="returnFieldTypeFive"  :message="{'音の数が多いです': returnFieldTypeFive}")
+                b-input(type="text" v-model="fifthSong" maxlength="7" @blur="fifth")
 
 
         //- TODO: ブラウン: refを用いてHTML要素へアクセスするためのサンプル
@@ -27,12 +38,16 @@ export default class WriteArea extends Vue {
     private firstSong = '千早ぶる';
     private secoundSong = '神代もきかず';
     private thirdSong = '龍田川';
+    private fourthSong = 'からくれなゐに';
+    private fifthSong = '水くくる';
     // FIXME: ブラウン: サンプル用のプロパティであっても'test'等の命名はしてはいけない。癖になっているようなのでこれは即矯正するべし。
     // プロパティ名にかかわらず、関数名やその他においても'それ'が持つ役割を認識可能な命名をするように心がけること。
     // コードを書きはじめの人、英語が苦手な人のためにこのようなサイトも存在する。https://codic.jp/
     private textBooleanValueOne = false;
     private textBooleanValueTwo = false;
     private textBooleanValueThree = false;
+    private textBooleanValueFour = false;
+    private textBooleanValueFive = false;
     private re = /(ぁ|ぃ|ぅ|ぇ|ぉ|っ|ゃ|ゅ|ょ|ゎ|ァ|ィ|ゥ|ェ|ォ|ッ|ャ|ュ|ョ|ヮ)/;
     private kuroshiroInstance = new Kuroshiro();
 
@@ -47,7 +62,7 @@ export default class WriteArea extends Vue {
         // 音が5以下の場合のチェックを else if などで実装しても良いが、正規表現で特定の文字数をチェックすることもできる。実装方法は任せる。
         if (countOne > 5) {
             this.textBooleanValueOne = true;
-        } else if (countOne <= 5) {
+        } else {
             this.textBooleanValueOne = false;
         }
     }
@@ -59,7 +74,7 @@ export default class WriteArea extends Vue {
         const countTwo = replaceRe.length;
         if (countTwo > 7) {
             this.textBooleanValueTwo = true;
-        } else if (countTwo <= 7) {
+        } else {
             this.textBooleanValueTwo = false;
         }
     }
@@ -71,8 +86,31 @@ export default class WriteArea extends Vue {
         const countThree = replaceRe.length;
         if (countThree > 5) {
             this.textBooleanValueThree = true;
-        } else if (countThree <= 5) {
+        } else {
             this.textBooleanValueThree = false;
+        }
+    }
+
+    private async fourth() {
+        const songFour = await this.kuroshiroInstance.convert(this.fourthSong, { to: 'hiragana' });
+        const reRef = new RegExp(this.re, 'g');
+        const replaceRe = songFour.replace(reRef, '');
+        const countFour = replaceRe.length;
+        if (countFour > 7) {
+            this.textBooleanValueFour = true;
+        } else {
+            this.textBooleanValueFour = false;
+        }
+    }
+    private async fifth() {
+        const songFive = await this.kuroshiroInstance.convert(this.fifthSong, { to: 'hiragana' });
+        const reRef = new RegExp(this.re, 'g');
+        const replaceRe = songFive.replace(reRef, '');
+        const countFive = replaceRe.length;
+        if (countFive > 7) {
+            this.textBooleanValueFive = true;
+        } else {
+            this.textBooleanValueFive = false;
         }
     }
     // TODO: ブラウン質問: ここでは何がしたい？実装しようとしている機能の説明を求む。
@@ -111,6 +149,21 @@ export default class WriteArea extends Vue {
             return '';
         }
     }
+    private get returnFieldTypeFour(): string {
+        if (this.textBooleanValueFour === true) {
+            return 'is-danger';
+        } else {
+            return '';
+        }
+    }
+    private get returnFieldTypeFive(): string {
+        if (this.textBooleanValueFive === true) {
+            return 'is-danger';
+        } else {
+            return '';
+        }
+    }
+
     private mounted() {
         LoadUtil.loading(this.$loading, async () => {
             await this.kuroshiroInstance.init(new KuromojiAnalyzer({dictPath: '/dict'}));
