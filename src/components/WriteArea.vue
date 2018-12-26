@@ -1,6 +1,9 @@
 <template lang="pug">
 .vue-write-area
     section.section
+
+        canvas(ref='canvas')
+
         p {{ firstSong }}
         p {{ secoundSong }}
         p {{ thirdSong }}
@@ -8,6 +11,7 @@
         p {{ fifthSong }}
 
         p.title 上の句
+        //- 上の句を書き込むエリア
         div.columns
             //- example2: メソッド（関数）を利用。この場合stringを返り値とするメソッド
             b-field.column(label="初句" horizontal  :type="returnFieldTypeOne"  :message="{'音の数が多いです': returnFieldTypeOne}")
@@ -17,21 +21,22 @@
             b-field.column(label="三句" horizontal  :type="returnFieldTypeThree"  :message="{'音の数が多いです': returnFieldTypeThree}")
                 b-input(type="text" v-model="thirdSong" maxlength="5" @blur="third")
         p.title 下の句
+        //- 下の句を書き込むエリア
         div.columns
             b-field.column(label="四句" horizontal :type="returnFieldTypeFour"  :message="{'音の数が多いです': returnFieldTypeFour}")
                 b-input(type="text" v-model="fourthSong" maxlength="7" @blur="fourth")
             b-field.column(label="結び句" horizontal :type="returnFieldTypeFive"  :message="{'音の数が多いです': returnFieldTypeFive}")
                 b-input(type="text" v-model="fifthSong" maxlength="7" @blur="fifth")
-
-
-        //- TODO: ブラウン: refを用いてHTML要素へアクセスするためのサンプル
-        canvas(ref='canvas')
 </template>
 <script lang="ts">
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import Kuroshiro from 'kuroshiro';
 import KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji';
 import LoadUtil from '@/utils/LoadUtil';
+
+interface Img {
+    [ key: string ]: string; // interfaceでimgの型定義を作っている。この場合、キーはstringでvalueがストリングの意味。
+}
 
 @Component
 export default class WriteArea extends Vue {
@@ -40,16 +45,37 @@ export default class WriteArea extends Vue {
     private thirdSong = '龍田川';
     private fourthSong = 'からくれなゐに';
     private fifthSong = '水くくる';
-    // FIXME: ブラウン: サンプル用のプロパティであっても'test'等の命名はしてはいけない。癖になっているようなのでこれは即矯正するべし。
-    // プロパティ名にかかわらず、関数名やその他においても'それ'が持つ役割を認識可能な命名をするように心がけること。
-    // コードを書きはじめの人、英語が苦手な人のためにこのようなサイトも存在する。https://codic.jp/
+
     private textBooleanValueOne = false;
     private textBooleanValueTwo = false;
     private textBooleanValueThree = false;
     private textBooleanValueFour = false;
     private textBooleanValueFive = false;
+
     private re = /(ぁ|ぃ|ぅ|ぇ|ぉ|っ|ゃ|ゅ|ょ|ゎ|ァ|ィ|ゥ|ェ|ォ|ッ|ャ|ュ|ョ|ヮ)/;
+
     private kuroshiroInstance = new Kuroshiro();
+
+    // canvasに使うデータの用意
+    private canvas: HTMLCanvasElement | null = null;
+    private ctx: CanvasRenderingContext2D | null = null;
+    private pinkSheet: HTMLImageElement | null = null;
+    private sheetWidth = 500;
+    private sheetHeight = 500;
+
+
+    // 画像を読み込む
+    private sheets: Img = {
+        'pink-sheet': require('../assets/sheets/pink.png'),
+    };
+
+    // 画像を描画する。
+    private drawImage() {
+        if (this.ctx === null || this.pinkSheet === null) {
+            return;
+        }
+        this.ctx.drawImage(this.pinkSheet, 0, 0);
+    }
 
     private async first() {
         const songOne = await this.kuroshiroInstance.convert(this.firstSong, { to: 'hiragana' });
@@ -58,15 +84,12 @@ export default class WriteArea extends Vue {
         // 正規表現を排除
         const replaceRe = songOne.replace(reRef , '');
         const countOne = replaceRe.length;
-        // FIXME: ブラウン: 音が5の場合OKならば、以下のように5以上の条件としているのは筋が通らない。'5より大きい'では？
-        // 音が5以下の場合のチェックを else if などで実装しても良いが、正規表現で特定の文字数をチェックすることもできる。実装方法は任せる。
         if (countOne > 5) {
             this.textBooleanValueOne = true;
         } else {
             this.textBooleanValueOne = false;
         }
     }
-
     private async second() {
         const songTwo = await this.kuroshiroInstance.convert(this.secoundSong, { to: 'hiragana' });
         const reRef = new RegExp(this.re, 'g');
@@ -78,7 +101,6 @@ export default class WriteArea extends Vue {
             this.textBooleanValueTwo = false;
         }
     }
-
     private async third() {
         const songThree = await this.kuroshiroInstance.convert(this.thirdSong, { to: 'hiragana' });
         const reRef = new RegExp(this.re, 'g');
@@ -90,7 +112,6 @@ export default class WriteArea extends Vue {
             this.textBooleanValueThree = false;
         }
     }
-
     private async fourth() {
         const songFour = await this.kuroshiroInstance.convert(this.fourthSong, { to: 'hiragana' });
         const reRef = new RegExp(this.re, 'g');
@@ -112,17 +133,6 @@ export default class WriteArea extends Vue {
         } else {
             this.textBooleanValueFive = false;
         }
-    }
-    // TODO: ブラウン質問: ここでは何がしたい？実装しようとしている機能の説明を求む。
-    // HTMLの属性の書き換えの例
-    private takeAttribute() {
-        const getElem: HTMLElement | any  = document.getElementById('takeMe');
-        const check = getElem.setAttribute('align', 'center');
-
-        // FIXME: ブラウン: vueでの開発でHTML要素へアクセスする場合、refを利用する
-        // 以下はtemplateのcanvas要素へアクセスするためのサンプル。
-        const canvasElement = this.$refs.canvas as HTMLCanvasElement;
-        console.log(canvasElement);
     }
 
     // 引数を与える必要がある場合はgetter関数にできない。その場合は通常のメソッドのように扱う。
@@ -163,12 +173,25 @@ export default class WriteArea extends Vue {
             return '';
         }
     }
-
     private mounted() {
         LoadUtil.loading(this.$loading, async () => {
             await this.kuroshiroInstance.init(new KuromojiAnalyzer({dictPath: '/dict'}));
             console.log('kuroshiro ready');
         });
+        this.canvas = this.$refs.canvas as HTMLCanvasElement;
+        this.canvas.width = this.sheetWidth;
+        this.canvas.height = this.sheetHeight;
+        this.ctx = this.canvas.getContext('2d');
+
+        this.pinkSheet = new Image();
+
+        this.pinkSheet.onload = () => {
+            if (this.ctx === null || this.pinkSheet === null) {
+                return;
+            }
+            this.drawImage();
+        };
+        this.pinkSheet.src = this.sheets['pink-sheet'];
     }
 }
 </script>
