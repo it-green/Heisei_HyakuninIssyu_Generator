@@ -1,41 +1,20 @@
 <template lang="pug">
 .vue-write-area
-    section.section
-        .sheetArea
-            canvas.canvas-style(ref="canvas")
+    section.section.has-text-centered
+        .container
+            canvas.canvas-size(ref='canvas')
 
-        .songs
-            p {{ firstSong }}
-            p {{ secondSong }}
-            p {{ thirdSong }}
-            p {{ fourthSong }}
-            p {{ fifthSong }}
-        //- 上の句を書き込むエリア
-        .forms
-            p.title 上の句
-            div.columns
-                //- example2: メソッド（関数）を利用。この場合stringを返り値とするメソッド
-                b-field.column(label="初句" horizontal  :type="returnFieldTypeOne"  :message="{'音の数が多いです': returnFieldTypeOne}")
-                    b-input(type="text" v-model="firstSong"  maxlength="5" @blur="first")
-                b-field.column(label="二句" horizontal :type="returnFieldTypeTwo"  :message="{'音の数が多いです': returnFieldTypeTwo}")
-                    b-input(type="text" v-model="secondSong" maxlength="7" @blur="second")
-                b-field.column(label="三句" horizontal  :type="returnFieldTypeThree"  :message="{'音の数が多いです': returnFieldTypeThree}")
-                    b-input(type="text" v-model="thirdSong" maxlength="5" @blur="third")
-            p.title 下の句
-            //- 下の句を書き込むエリア
-            div.columns
-                b-field.column(label="四句" horizontal :type="returnFieldTypeFour"  :message="{'音の数が多いです': returnFieldTypeFour}")
-                    b-input(type="text" v-model="fourthSong" maxlength="7" @blur="fourth")
-                b-field.column(label="結び句" horizontal :type="returnFieldTypeFive"  :message="{'音の数が多いです': returnFieldTypeFive}")
-                    b-input(type="text" v-model="fifthSong" maxlength="7" @blur="fifth")
-
-            button.button.column.is-info(@click="downloadImg" ref="download") 画像をダウンロード
+    section.section.input-section
+        b-field(v-for='formItem in formItems' :type='returnFieldType(formItem.hasError)' :label='formItem.label' :message='returnMessage(formItem.errorMessage, formItem.hasError)' :key='formItem.id' horizontal)
+            b-input(type='text' v-model='formItem.value' maxlength='10' @blur='checkPhraseLength(formItem.value, formItem.label, formItem.id)')
+        button.button.is-success.is-pulled-right(@click='changeFrame("blue")') ボタン
 </template>
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import { Component, Vue, Watch } from 'vue-property-decorator';
 import Kuroshiro from 'kuroshiro';
 import KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji';
 import LoadUtil from '@/utils/LoadUtil';
+import ImgUtil from '@/utils/ImgUtil';
 
 interface Img {
     [ key: string ]: string; // interfaceでimgの型定義を作っている。この場合、キーはstringでvalueがストリングの意味。
@@ -43,253 +22,156 @@ interface Img {
 
 @Component
 export default class WriteArea extends Vue {
-    private firstSong: string  = '千早ぶる';
-    private secondSong: string = '神代もきかず';
-    private thirdSong: string = '龍田川';
-    private fourthSong: string = 'からくれなゐに';
-    private fifthSong: string = '水くくる';
-
-    private textBooleanValueOne = false;
-    private textBooleanValueTwo = false;
-    private textBooleanValueThree = false;
-    private textBooleanValueFour = false;
-    private textBooleanValueFive = false;
-
-    private re = /(ぁ|ぃ|ぅ|ぇ|ぉ|っ|ゃ|ゅ|ょ|ゎ|ァ|ィ|ゥ|ェ|ォ|ッ|ャ|ュ|ョ|ヮ)/;
-
     private kuroshiroInstance = new Kuroshiro();
+    private hasError = false;
+    private formItems = [
+        { id: 1, label: '5', value: 'くれなゐの', errorMessage: '5音の句を入力してください', hasError: false },
+        { id: 2, label: '7', value: '二尺伸びたる', errorMessage: '7音の句を入力してください', hasError: false },
+        { id: 3, label: '5', value: '薔薇の芽の', errorMessage: '5音の句を入力してください', hasError: false },
+        { id: 4, label: '7', value: '針やはらかに', errorMessage: '7音の句を入力してください', hasError: false },
+        { id: 5, label: '7', value: '春雨のふる', errorMessage: '7音の句を入力してください', hasError: false },
+    ];
+    private Imgs = {
+        defaultFrame: require('@/assets/sheets/pink.png'),
+        blueFrame: require('@/assets/sheets/blue.png'),
+    } as Imgs;
+    private frameImgObj: {[key: string]: HTMLImageElement} = {};
 
-    // canvasに使うデータの用意
-    private canvas: HTMLCanvasElement | null = null;
-    private ctx: CanvasRenderingContext2D | null = null;
-    private pinkSheet: HTMLImageElement | null = null;
-    private ctxFirstSong: CanvasRenderingContext2D | null = null;
-    private ctxSecoundSong: CanvasRenderingContext2D | null = null;
-    private ctxThirdSong: CanvasRenderingContext2D | null = null;
-    private ctxFourthSong: CanvasRenderingContext2D | null = null;
-    private ctxFifthSong: CanvasRenderingContext2D | null = null;
-    private sheetWidth = 500;
-    private sheetHeight = 500;
-
-    // 画像を読み込む
-    private sheets: Img = {
-        'pink-sheet': require('../assets/sheets/pink.png'),
-    };
-
-    // 画像を描画する。
-    private drawSheet() {
-        if (this.ctx === null || this.pinkSheet === null) {
-            return;
-        }
-        this.ctx.drawImage(this.pinkSheet, 0, 0);
-    }
-    // 短歌をcanvasに描画する。
-    private drawCanvasFirstSong() {
-        if (this.ctxFirstSong === null ) {
-            return;
-        }
-        this.ctxFirstSong.font = '25px serif';
-        this.ctxFirstSong.fillStyle = 'white';
-        this.ctxFirstSong.fillText(this.firstSong, 50, 160);
-    }
-    private drawCanvasSecoundSong() {
-        if (this.ctxSecoundSong === null) {
-            return;
-        }
-        this.ctxSecoundSong.font = '25px serif';
-        this.ctxSecoundSong.fillStyle = 'white';
-        this.ctxSecoundSong.fillText(this.secondSong, 50, 200);
-    }
-    private drawCanvasThirdSong() {
-        if (this.ctxThirdSong === null) {
-            return;
-        }
-        this.ctxThirdSong.font = '25px serif';
-        this.ctxThirdSong.fillStyle = 'White';
-        this.ctxThirdSong.fillText(this.thirdSong, 50, 240);
-    }
-    private drawCanvasFourthSong() {
-        if (this.ctxFourthSong === null) {
-            return;
-        }
-        this.ctxFourthSong.font = '25px serif';
-        this.ctxFourthSong.fillStyle = 'white';
-        this.ctxFourthSong.fillText(this.fourthSong, 50, 280);
-    }
-    private drawCanvasFifthSong() {
-        if (this.ctxFifthSong === null) {
-            return;
-        }
-        this.ctxFifthSong.font = '25px serif';
-        this.ctxFifthSong.fillStyle = 'white';
-        this.ctxFifthSong.fillText(this.fifthSong, 50, 320);
-    }
-
-    private async first() {
-        const songOne = await this.kuroshiroInstance.convert(this.firstSong, { to: 'hiragana' });
-        // ここで正規表現を参照
-        const reRef = new RegExp(this.re, 'g');
-        // 正規表現を排除
-        const replaceRe = songOne.replace(reRef , '');
-        const countOne = replaceRe.length;
-        if (countOne > 5) {
-            this.textBooleanValueOne = true;
+    private returnFieldType(hasError: boolean): string {
+        if (!hasError) {
+            return '';
         } else {
-            this.textBooleanValueOne = false;
-        }
-    }
-    private async second() {
-        const songTwo = await this.kuroshiroInstance.convert(this.secondSong, { to: 'hiragana' });
-        const reRef = new RegExp(this.re, 'g');
-        const replaceRe = songTwo.replace(reRef, '');
-        const countTwo = replaceRe.length;
-        if (countTwo > 7) {
-            this.textBooleanValueTwo = true;
-        } else {
-            this.textBooleanValueTwo = false;
-        }
-    }
-    private async third() {
-        const songThree = await this.kuroshiroInstance.convert(this.thirdSong, { to: 'hiragana' });
-        const reRef = new RegExp(this.re, 'g');
-        const replaceRe = songThree.replace(reRef, '');
-        const countThree = replaceRe.length;
-        if (countThree > 5) {
-            this.textBooleanValueThree = true;
-        } else {
-            this.textBooleanValueThree = false;
-        }
-    }
-    private async fourth() {
-        const songFour = await this.kuroshiroInstance.convert(this.fourthSong, { to: 'hiragana' });
-        const reRef = new RegExp(this.re, 'g');
-        const replaceRe = songFour.replace(reRef, '');
-        const countFour = replaceRe.length;
-        if (countFour > 7) {
-            this.textBooleanValueFour = true;
-        } else {
-            this.textBooleanValueFour = false;
-        }
-    }
-    private async fifth() {
-        const songFive = await this.kuroshiroInstance.convert(this.fifthSong, { to: 'hiragana' });
-        const reRef = new RegExp(this.re, 'g');
-        const replaceRe = songFive.replace(reRef, '');
-        const countFive = replaceRe.length;
-        if (countFive > 7) {
-            this.textBooleanValueFive = true;
-        } else {
-            this.textBooleanValueFive = false;
+            return 'is-danger';
         }
     }
 
-    // 引数を与える必要がある場合はgetter関数にできない。その場合は通常のメソッドのように扱う。
-    private get returnFieldTypeOne(): string {
-        if (this.textBooleanValueOne === true) {
-            // this.testがtrueの場合
-            return 'is-danger';
-        } else {
-            // 上記の条件以外の場合
+    private returnMessage(message: string, hasError: boolean): string {
+        if (!hasError) {
             return '';
+        } else {
+            return message;
         }
     }
-    private get returnFieldTypeTwo(): string {
-        if (this.textBooleanValueTwo === true) {
-            return 'is-danger';
-        } else {
-            return '';
-        }
+
+    private checkPhraseLength(formValue: string, numberToCountChars: string, formId: number) {
+        // 入力値をひらがなへ変換
+        this.kuroshiroInstance.convert(formValue, { to: 'hiragana' })
+            .then((result: string) => {
+                console.log(`変換結果：${result}`);
+                // 変換結果からひらがな又はカタカナの小文字を削除
+                const noLowerCase = result.replace(/[ぁぃぅぇぉゕゖっゃゅょゎァィゥェォヵヶッャュョヮ]/g, '');
+                console.log(`小文字を取り払った結果：${noLowerCase}`);
+                // formItem.label の値から、チェックする文字数を変数 numberToCountChars として渡す
+                // 文字数チェック用の正規表現を作成
+                const checkChars = new RegExp(`^.{${numberToCountChars}}$`);
+                const checkResult = checkChars.test(noLowerCase);
+                console.log(`最終チェック結果：${checkResult}`);
+                console.log('------------------------------------');
+                this.formItems.forEach((item) => {
+                    if (item.id === formId && checkResult === false) {
+                        item.hasError = true;
+                    }
+                    if (item.id === formId && checkResult === true) {
+                        item.hasError = false;
+                    }
+                });
+            },
+        );
     }
-    private get returnFieldTypeThree(): string {
-        if (this.textBooleanValueThree === true) {
-            return 'is-danger';
-        } else {
-            return '';
-        }
+
+    private preloadImages() {
+        const imgsKeys = Object.keys(this.Imgs);
+        Promise.all(imgsKeys.map(async (key) => {
+            const url = this.Imgs[key] as string;
+            await ImgUtil.loadImg(url).then((img) => this.frameImgObj[key] = img);
+        }));
     }
-    private get returnFieldTypeFour(): string {
-        if (this.textBooleanValueFour === true) {
-            return 'is-danger';
-        } else {
-            return '';
-        }
-    }
-    private get returnFieldTypeFive(): string {
-        if (this.textBooleanValueFive === true) {
-            return 'is-danger';
-        } else {
-            return '';
-        }
-    }
-    // 画像をbase64形式に変換する。
-    private downloadImg() {
-        if (this.canvas === null) {
+
+    private initFrame() {
+        const canvas = this.$refs.canvas as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            console.error('no canvas context');
             return;
         }
-        const typeBase64 =  this.canvas.toDataURL('image/png');
-        console.log(typeBase64);
+        ImgUtil.loadImg(this.Imgs.defaultFrame as string)
+            .then((img) => {
+                canvas.width = img.naturalWidth;
+                canvas.height = img.naturalHeight;
+                ctx.drawImage(img, 0, 0);
+            }).catch((e) => {
+                console.error(e);
+            },
+        );
     }
+
+    private changeFrame(color: string) {
+        const canvas = this.$refs.canvas as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            console.error('no canvas context');
+            return;
+        }
+        switch (color) {
+            case 'pink':
+                canvas.width = this.frameImgObj.defaultFrame.naturalWidth;
+                canvas.height = this.frameImgObj.defaultFrame.naturalHeight;
+                ctx.drawImage(this.frameImgObj.defaultFrame, 0, 0);
+                break;
+            case 'blue':
+                canvas.width = this.frameImgObj.blueFrame.naturalWidth;
+                canvas.height = this.frameImgObj.blueFrame.naturalHeight;
+                ctx.drawImage(this.frameImgObj.blueFrame, 0, 0);
+                break;
+            default:
+                break;
+        }
+    }
+
     private mounted() {
+        this.preloadImages();
+        this.initFrame();
+        // kuroshiro の初期化が完了するまで loding を表示
         LoadUtil.loading(this.$loading, async () => {
             await this.kuroshiroInstance.init(new KuromojiAnalyzer({dictPath: '/dict'}));
-            console.log('kuroshiro ready');
+            console.log('kuroshiro is ready');
         });
-        // canvasの処理(画像の方)
-        this.canvas = this.$refs.canvas as HTMLCanvasElement;
-        this.canvas.width = this.sheetWidth;
-        this.canvas.height = this.sheetHeight;
-        this.ctx = this.canvas.getContext('2d');
-        this.ctxFirstSong = this.canvas.getContext('2d');
-        this.ctxSecoundSong = this.canvas.getContext('2d');
-        this.ctxThirdSong = this.canvas.getContext('2d');
-        this.ctxFourthSong = this.canvas.getContext('2d');
-        this.ctxFifthSong = this.canvas.getContext('2d');
-
-        this.pinkSheet = new Image();
-
-        this.pinkSheet.onload = () => {
-            if (this.ctx === null || this.pinkSheet === null) {
-                return;
-            }
-            this.drawSheet();
-            this.drawCanvasFirstSong();
-            this.drawCanvasSecoundSong();
-            this.drawCanvasThirdSong();
-            this.drawCanvasFourthSong();
-            this.drawCanvasFifthSong();
-        };
-        this.pinkSheet.src = this.sheets['pink-sheet'];
     }
 
-    @Watch('firstSong')
-    @Watch('secondSong')
-    @Watch('thirdSong')
-    @Watch('fourthSong')
-    @Watch('fifthSong')
-    private watchSong() {
-        this.drawSheet();
-        this.drawCanvasFirstSong();
-        this.drawCanvasSecoundSong();
-        this.drawCanvasThirdSong();
-        this.drawCanvasFourthSong();
-        this.drawCanvasFifthSong();
+    @Watch('formItems', { deep: true })
+    private fillCanvasText() {
+        this.changeFrame('pink');
+        const canvas = this.$refs.canvas as HTMLCanvasElement;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) {
+            console.error('no canvas context');
+            return;
+        }
+        ctx.font = '30px Arial';
+        ctx.fillStyle = 'white';
+        ctx.textAlign = 'left';
+        const formItemLength = this.formItems.length;
+        const cellHeight = canvas.height / 8;
+        this.formItems.forEach((formItem, index) => {
+            ctx.fillText(formItem.value, 80, (index + 2) * cellHeight);
+        });
     }
 }
 </script>
 <style lang="sass">
-@import 'all';
+$canvas-min-size: 280px
+$canvas-max-size: 550px
 .vue-write-area
-    .songs
-        display: none
+    .canvas-size
+        min-width: $canvas-min-size
+        min-height: $canvas-min-size
+        max-width: $canvas-max-size
+        max-height: $canvas-max-size
+        width: 100%
+        height: 100&
 
-    .sheetArea
-        display: flex
-    .canvas-style
+    .input-section
+        max-width: 600px
         margin: 0 auto
-    // スマホ用のcss
-    @media screen and (max-width: $tablet)
-        .canvas-style
-            margin: 0 auto
-            height: 100%
-            width: 100%
+
 </style>
