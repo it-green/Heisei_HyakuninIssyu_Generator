@@ -2,8 +2,14 @@
 .vue-write-area
     section.section
         .sheetArea
-            canvas.canvas-style(ref="canvas" v-modl="firstSong")
+            canvas.canvas-style(ref="canvas")
 
+        .songs
+            p{{ firstSong }}
+            p {{ secoundSong }}
+            p {{ thirdSong }}
+            p {{ fourthSong }}
+            p {{ fifthSong }}
         //- 上の句を書き込むエリア
         .forms
             p.title 上の句
@@ -77,26 +83,45 @@ export default class WriteArea extends Vue {
         }
         this.ctx.drawImage(this.pinkSheet, 0, 0);
     }
-
-    private drawSong() {
-        if (this.ctxFirstSong === null || this.ctxSecoundSong === null || this.ctxThirdSong === null ||
-            this.ctxFourthSong === null || this.ctxFifthSong === null) {
+    // 短歌をcanvasに描画する。
+    private drawCanvasFirstSong() {
+        if (this.ctxFirstSong === null ) {
             return;
         }
         this.ctxFirstSong.font = '25px serif';
-        this.ctxSecoundSong.font = '25px serif';
-        this.ctxThirdSong.font = '25px serif';
-        this.ctxFourthSong.font = '25px serif';
-        this.ctxFifthSong.font = '25px serif';
         this.ctxFirstSong.fillStyle = 'white';
-        this.ctxSecoundSong.fillStyle = 'white';
-        this.ctxThirdSong.fillStyle = 'white';
-        this.ctxFourthSong.fillStyle = 'white';
-        this.ctxFifthSong.fillStyle = 'whitw';
         this.ctxFirstSong.fillText(this.firstSong, 50, 160);
+    }
+    private drawCanvasSecoundSong() {
+        if (this.ctxSecoundSong === null) {
+            return;
+        }
+        this.ctxSecoundSong.font = '25px serif';
+        this.ctxSecoundSong.fillStyle = 'white';
         this.ctxSecoundSong.fillText(this.secoundSong, 50, 200);
+    }
+    private drawCanvasThirdSong() {
+        if (this.ctxThirdSong === null) {
+            return;
+        }
+        this.ctxThirdSong.font = '25px serif';
+        this.ctxThirdSong.fillStyle = 'White';
         this.ctxThirdSong.fillText(this.thirdSong, 50, 240);
+    }
+    private drawCanvasFourthSong() {
+        if (this.ctxFourthSong === null) {
+            return;
+        }
+        this.ctxFourthSong.font = '25px serif';
+        this.ctxFourthSong.fillStyle = 'white';
         this.ctxFourthSong.fillText(this.fourthSong, 50, 280);
+    }
+    private drawCanvasFifthSong() {
+        if (this.ctxFifthSong === null) {
+            return;
+        }
+        this.ctxFifthSong.font = '25px serif';
+        this.ctxFifthSong.fillStyle = 'white';
         this.ctxFifthSong.fillText(this.fifthSong, 50, 320);
     }
 
@@ -227,7 +252,11 @@ export default class WriteArea extends Vue {
                 return;
             }
             this.drawSheet();
-            this.drawSong();
+            this.drawCanvasFirstSong();
+            this.drawCanvasSecoundSong();
+            this.drawCanvasThirdSong();
+            this.drawCanvasFourthSong();
+            this.drawCanvasFifthSong();
         };
         this.pinkSheet.src = this.sheets['pink-sheet'];
     }
@@ -236,9 +265,9 @@ export default class WriteArea extends Vue {
 <style lang="sass">
 @import 'all';
 .vue-write-area
-    .song
-        p
-        color: green
+    .songs
+        display: none
+
     .sheetArea
         display: flex
     .canvas-style
