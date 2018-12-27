@@ -5,8 +5,8 @@
             canvas.canvas-style(ref="canvas")
 
         .songs
-            p{{ firstSong }}
-            p {{ secoundSong }}
+            p {{ firstSong }}
+            p {{ secondSong }}
             p {{ thirdSong }}
             p {{ fourthSong }}
             p {{ fifthSong }}
@@ -18,7 +18,7 @@
                 b-field.column(label="初句" horizontal  :type="returnFieldTypeOne"  :message="{'音の数が多いです': returnFieldTypeOne}")
                     b-input(type="text" v-model="firstSong"  maxlength="5" @blur="first")
                 b-field.column(label="二句" horizontal :type="returnFieldTypeTwo"  :message="{'音の数が多いです': returnFieldTypeTwo}")
-                    b-input(type="text" v-model="secoundSong" maxlength="7" @blur="second")
+                    b-input(type="text" v-model="secondSong" maxlength="7" @blur="second")
                 b-field.column(label="三句" horizontal  :type="returnFieldTypeThree"  :message="{'音の数が多いです': returnFieldTypeThree}")
                     b-input(type="text" v-model="thirdSong" maxlength="5" @blur="third")
             p.title 下の句
@@ -32,7 +32,7 @@
             button.button.column.is-info(@click="downloadImg" ref="download") 画像をダウンロード
 </template>
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import Kuroshiro from 'kuroshiro';
 import KuromojiAnalyzer from 'kuroshiro-analyzer-kuromoji';
 import LoadUtil from '@/utils/LoadUtil';
@@ -44,7 +44,7 @@ interface Img {
 @Component
 export default class WriteArea extends Vue {
     private firstSong: string  = '千早ぶる';
-    private secoundSong: string = '神代もきかず';
+    private secondSong: string = '神代もきかず';
     private thirdSong: string = '龍田川';
     private fourthSong: string = 'からくれなゐに';
     private fifthSong: string = '水くくる';
@@ -64,7 +64,7 @@ export default class WriteArea extends Vue {
     private ctx: CanvasRenderingContext2D | null = null;
     private pinkSheet: HTMLImageElement | null = null;
     private ctxFirstSong: CanvasRenderingContext2D | null = null;
-    private ctxSecoundSong: CanvasRenderingContext2D | null = null;
+    private ctxSecondSong: CanvasRenderingContext2D | null = null;
     private ctxThirdSong: CanvasRenderingContext2D | null = null;
     private ctxFourthSong: CanvasRenderingContext2D | null = null;
     private ctxFifthSong: CanvasRenderingContext2D | null = null;
@@ -85,20 +85,20 @@ export default class WriteArea extends Vue {
     }
     // 短歌をcanvasに描画する。
     private drawCanvasFirstSong() {
-        if (this.ctxFirstSong === null ) {
+        if (this.ctxFirstSong === null) {
             return;
         }
         this.ctxFirstSong.font = '25px serif';
         this.ctxFirstSong.fillStyle = 'white';
         this.ctxFirstSong.fillText(this.firstSong, 50, 160);
     }
-    private drawCanvasSecoundSong() {
-        if (this.ctxSecoundSong === null) {
+    private drawCanvasSecondSong() {
+        if (this.ctxSecondSong === null) {
             return;
         }
-        this.ctxSecoundSong.font = '25px serif';
-        this.ctxSecoundSong.fillStyle = 'white';
-        this.ctxSecoundSong.fillText(this.secoundSong, 50, 200);
+        this.ctxSecondSong.font = '25px serif';
+        this.ctxSecondSong.fillStyle = 'white';
+        this.ctxSecondSong.fillText(this.secondSong, 50, 200);
     }
     private drawCanvasThirdSong() {
         if (this.ctxThirdSong === null) {
@@ -139,7 +139,7 @@ export default class WriteArea extends Vue {
         }
     }
     private async second() {
-        const songTwo = await this.kuroshiroInstance.convert(this.secoundSong, { to: 'hiragana' });
+        const songTwo = await this.kuroshiroInstance.convert(this.secondSong, { to: 'hiragana' });
         const reRef = new RegExp(this.re, 'g');
         const replaceRe = songTwo.replace(reRef, '');
         const countTwo = replaceRe.length;
@@ -240,7 +240,7 @@ export default class WriteArea extends Vue {
         this.canvas.height = this.sheetHeight;
         this.ctx = this.canvas.getContext('2d');
         this.ctxFirstSong = this.canvas.getContext('2d');
-        this.ctxSecoundSong = this.canvas.getContext('2d');
+        this.ctxSecondSong = this.canvas.getContext('2d');
         this.ctxThirdSong = this.canvas.getContext('2d');
         this.ctxFourthSong = this.canvas.getContext('2d');
         this.ctxFifthSong = this.canvas.getContext('2d');
@@ -253,13 +253,26 @@ export default class WriteArea extends Vue {
             }
             this.drawSheet();
             this.drawCanvasFirstSong();
-            this.drawCanvasSecoundSong();
+            this.drawCanvasSecondSong();
             this.drawCanvasThirdSong();
             this.drawCanvasFourthSong();
             this.drawCanvasFifthSong();
         };
         this.pinkSheet.src = this.sheets['pink-sheet'];
     }
+    @Watch('firstSong')
+    @Watch('secondSong')
+    @Watch('thirdSong')
+    @Watch('fourthSong')
+    @Watch('fifthSong')
+        private rewrite() {
+            this.drawSheet();
+            this.drawCanvasFirstSong();
+            this.drawCanvasSecondSong();
+            this.drawCanvasThirdSong();
+            this.drawCanvasFourthSong();
+            this.drawCanvasFifthSong();
+        }
 }
 </script>
 <style lang="sass">
