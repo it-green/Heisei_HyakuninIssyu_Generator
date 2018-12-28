@@ -3,13 +3,6 @@
     section.section
         .sheetArea
             canvas.canvas-style(ref="canvas")
-
-        .songs
-            p {{ firstSong }}
-            p {{ secondSong }}
-            p {{ thirdSong }}
-            p {{ fourthSong }}
-            p {{ fifthSong }}
         //- 上の句を書き込むエリア
         .forms
             p.title 上の句
@@ -232,7 +225,6 @@ export default class WriteArea extends Vue {
     private mounted() {
         LoadUtil.loading(this.$loading, async () => {
             await this.kuroshiroInstance.init(new KuromojiAnalyzer({dictPath: '/dict'}));
-            console.log('kuroshiro ready');
         });
         // canvasの処理(画像の方)
         this.canvas = this.$refs.canvas as HTMLCanvasElement;
@@ -278,9 +270,6 @@ export default class WriteArea extends Vue {
 <style lang="sass">
 @import 'all';
 .vue-write-area
-    .songs
-        display: none
-
     .sheetArea
         display: flex
     .canvas-style
