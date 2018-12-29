@@ -1,27 +1,26 @@
 <template lang="pug">
 .vue-write-area
-        .sheetArea
-            canvas.canvas-style(ref="canvas")
-        //- 上の句を書き込むエリア
-        .forms
-            p.title 上の句
-            div.columns
-                //- example2: メソッド（関数）を利用。この場合stringを返り値とするメソッド
-                b-field.column(label="初句" horizontal  :type="returnFieldTypeOne"  :message="{'音の数が多いです': returnFieldTypeOne}")
-                    b-input(type="text" v-model="firstSong"  maxlength="5" @blur="first")
-                b-field.column(label="二句" horizontal :type="returnFieldTypeTwo"  :message="{'音の数が多いです': returnFieldTypeTwo}")
-                    b-input(type="text" v-model="secondSong" maxlength="7" @blur="second")
-                b-field.column(label="三句" horizontal  :type="returnFieldTypeThree"  :message="{'音の数が多いです': returnFieldTypeThree}")
-                    b-input(type="text" v-model="thirdSong" maxlength="5" @blur="third")
-            p.title 下の句
-            //- 下の句を書き込むエリア
-            div.columns
-                b-field.column(label="四句" horizontal :type="returnFieldTypeFour"  :message="{'音の数が多いです': returnFieldTypeFour}")
-                    b-input(type="text" v-model="fourthSong" maxlength="7" @blur="fourth")
-                b-field.column(label="結び句" horizontal :type="returnFieldTypeFive"  :message="{'音の数が多いです': returnFieldTypeFive}")
-                    b-input(type="text" v-model="fifthSong" maxlength="7" @blur="fifth")
+    .sheetArea
+        canvas.canvas-style(ref="canvas")
+    //- 上の句を書き込むエリア
+    .forms
+        p.title 上の句
+        div.columns
+            b-field.column(label="初句" horizontal  :type="returnFieldTypeOne"  :message="{'音の数が多いです': returnFieldTypeOne}")
+                b-input(type="text" v-model="firstSong"  maxlength="5" @blur="first")
+            b-field.column(label="二句" horizontal :type="returnFieldTypeTwo"  :message="{'音の数が多いです': returnFieldTypeTwo}")
+                b-input(type="text" v-model="secondSong" maxlength="7" @blur="second")
+            b-field.column(label="三句" horizontal  :type="returnFieldTypeThree"  :message="{'音の数が多いです': returnFieldTypeThree}")
+                b-input(type="text" v-model="thirdSong" maxlength="5" @blur="third")
+        p.title 下の句
+        //- 下の句を書き込むエリア
+        div.columns
+            b-field.column(label="四句" horizontal :type="returnFieldTypeFour"  :message="{'音の数が多いです': returnFieldTypeFour}")
+                b-input(type="text" v-model="fourthSong" maxlength="7" @blur="fourth")
+            b-field.column(label="結び句" horizontal :type="returnFieldTypeFive"  :message="{'音の数が多いです': returnFieldTypeFive}")
+                b-input(type="text" v-model="fifthSong" maxlength="7" @blur="fifth")
 
-            button.button.column.is-info(@click="downloadImg" ref="download") 画像をダウンロード
+        button.button.column.is-info(@click="downloadImg" ref="download") 画像をダウンロード
 </template>
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
