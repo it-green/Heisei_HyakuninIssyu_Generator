@@ -3,7 +3,7 @@
     .center-box
         a.main-visual-parent(href="https://www.google.co.jp")
             img.main-logo(src="../assets/mainVisual.jpg")
-
+        hr.app-border
 </template>
 
 <script lang="ts">
@@ -24,4 +24,7 @@ export default class Header extends Vue {
 .center-box
     text-align: center
     margin-top: 20px
+.app-border
+    height: 2px
+    background-color: #ffccff
 </style>

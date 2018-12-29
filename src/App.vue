@@ -43,6 +43,5 @@ export default class App extends Vue {}
     &.router-link-exact-active
         color: #42b983
 .writeArea-style
-    margin-top: 15px
-
+    margin-top: 60px
 </style>

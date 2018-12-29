@@ -2,6 +2,7 @@
 .vue-write-area
     .sheetArea
         canvas.canvas-style(ref="canvas")
+
     //- 上の句を書き込むエリア
     .forms
         p.title 上の句
@@ -20,7 +21,8 @@
             b-field.column(label="結び句" horizontal :type="returnFieldTypeFive"  :message="{'音の数が多いです': returnFieldTypeFive}")
                 b-input(type="text" v-model="fifthSong" maxlength="7" @blur="fifth")
 
-        button.button.column.is-info(@click="downloadImg" ref="download") 画像をダウンロード
+    .button-parent
+            button.button.is-info.button-style(@click="downloadImg" ref="download") 画像をダウンロード
 </template>
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
@@ -276,6 +278,11 @@ export default class WriteArea extends Vue {
         max-width: 80%
         margin: 0 auto
         margin-top: 40px
+    .button-parent
+        display: flex
+    .button-style
+        margin: 0 auto
+        margin-top: 55px
     // スマホ用のcss
     @media screen and (max-width: $tablet)
         .canvas-style
