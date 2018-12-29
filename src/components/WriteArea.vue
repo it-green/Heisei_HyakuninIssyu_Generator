@@ -1,6 +1,5 @@
 <template lang="pug">
 .vue-write-area
-    section.section
         .sheetArea
             canvas.canvas-style(ref="canvas")
         //- 上の句を書き込むエリア
@@ -40,7 +39,7 @@ export default class WriteArea extends Vue {
     private secondSong: string = '神代もきかず';
     private thirdSong: string = '龍田川';
     private fourthSong: string = 'からくれなゐに';
-    private fifthSong: string = '水くくる';
+    private fifthSong: string = '水くくるとは';
 
     private textBooleanValueOne = false;
     private textBooleanValueTwo = false;
@@ -274,10 +273,15 @@ export default class WriteArea extends Vue {
         display: flex
     .canvas-style
         margin: 0 auto
+    .forms
+        max-width: 80%
+        margin: 0 auto
+        margin-top: 40px
     // スマホ用のcss
     @media screen and (max-width: $tablet)
         .canvas-style
             margin: 0 auto
             height: 100%
             width: 100%
+            max-width: 90%
 </style>

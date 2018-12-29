@@ -1,17 +1,20 @@
 <template lang="pug">
     #app
-        WriteArea
+        Header
+        WriteArea.writeArea-style
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import WriteArea from '@/components/WriteArea.vue';
+import Header from '@/components/Header.vue';
 import Buefy from 'buefy';
 Vue.use(Buefy);
 
 @Component({
     components: {
         WriteArea,
+        Header,
     },
 })
 export default class App extends Vue {}
@@ -36,5 +39,7 @@ export default class App extends Vue {}
     color: #2c3e50
     &.router-link-exact-active
         color: #42b983
+.writeArea-style
+    margin-top: 15px
 
 </style>
