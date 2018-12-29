@@ -2,12 +2,14 @@
     #app
         Header
         WriteArea.writeArea-style
+        Footer
 </template>
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import WriteArea from '@/components/WriteArea.vue';
 import Header from '@/components/Header.vue';
+import Footer from '@/components/Footer.vue';
 import Buefy from 'buefy';
 Vue.use(Buefy);
 
@@ -15,6 +17,7 @@ Vue.use(Buefy);
     components: {
         WriteArea,
         Header,
+        Footer,
     },
 })
 export default class App extends Vue {}
