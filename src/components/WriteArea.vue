@@ -22,7 +22,7 @@
                 b-input(type="text" v-model="fifthSong" maxlength="7" @blur="fifth")
 
     .button-parent
-            button.button.is-info.button-style(@click="downloadImg" ref="download") 画像をダウンロード
+            button#download.button.is-info.button-style(ref="download" @click="checkbtn") 画像をダウンロード
 </template>
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
@@ -214,13 +214,15 @@ export default class WriteArea extends Vue {
             return '';
         }
     }
-    // 画像をbase64形式に変換する。
-    private downloadImg() {
+    private checkbtn() {
         if (this.canvas === null) {
             return;
         }
-        const typeBase64 =  this.canvas.toDataURL('image/png');
-        console.log(typeBase64);
+            const canvasDate = this.$refs.canvas;
+            const link = document.createElement('a');
+            link.href = this.canvas.toDataURL('image/png');
+            link.download = '平成百人一首.png';
+            link.click();
     }
     private mounted() {
         LoadUtil.loading(this.$loading, async () => {
