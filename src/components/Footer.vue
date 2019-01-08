@@ -3,7 +3,7 @@
     footer.footer
         .content.has-text-centered
             p made by
-                strong  平成百人一首五歌仙
+                strong  平成百人一首
 </template>
 
 <script lang="ts">

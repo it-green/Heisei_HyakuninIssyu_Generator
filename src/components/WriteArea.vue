@@ -38,7 +38,6 @@ export default class WriteArea extends Vue {
     private thirdSong: string = '龍田川';
     private fourthSong: string = 'からくれなゐに';
     private fifthSong: string = '水くくるとは';
-
     // canvasに使うデータの用意
     private canvas: HTMLCanvasElement | null = null;
     private ctx: CanvasRenderingContext2D | null = null;
