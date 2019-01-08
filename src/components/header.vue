@@ -1,7 +1,7 @@
 <template lang="pug">
 #header
     .center-box
-        a.main-visual-parent(href="https://www.google.co.jp")
+        a.main-visual-parent(href="http://heysay100.her.jp/")
             img.main-logo(src="../assets/mainVisual.jpg")
         hr.app-border
 </template>

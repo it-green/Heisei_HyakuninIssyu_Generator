@@ -7,22 +7,22 @@
     .forms
         p.title 上の句
         div.columns
-            b-field.column(label="初句" horizontal  :type="returnFieldTypeOne"  :message="{'音の数が多いです': returnFieldTypeOne}")
+            b-field.column(label="初句" horizontal ,:type="returnFieldTypeOne" ,:message="{'音の数が多いです': returnFieldTypeOne}")
                 b-input(type="text" v-model="firstSong"  maxlength="5" @blur="first")
-            b-field.column(label="二句" horizontal :type="returnFieldTypeTwo"  :message="{'音の数が多いです': returnFieldTypeTwo}")
+            b-field.column(label="二句" horizontal ,:type="returnFieldTypeTwo" ,:message="{'音の数が多いです': returnFieldTypeTwo}")
                 b-input(type="text" v-model="secondSong" maxlength="7" @blur="second")
-            b-field.column(label="三句" horizontal  :type="returnFieldTypeThree"  :message="{'音の数が多いです': returnFieldTypeThree}")
+            b-field.column(label="三句" horizontal ,:type="returnFieldTypeThree" ,:message="{'音の数が多いです': returnFieldTypeThree}")
                 b-input(type="text" v-model="thirdSong" maxlength="5" @blur="third")
         p.title 下の句
         //- 下の句を書き込むエリア
         div.columns
-            b-field.column(label="四句" horizontal :type="returnFieldTypeFour"  :message="{'音の数が多いです': returnFieldTypeFour}")
+            b-field.column(label="四句" horizontal ,:type="returnFieldTypeFour" ,:message="{'音の数が多いです': returnFieldTypeFour}")
                 b-input(type="text" v-model="fourthSong" maxlength="7" @blur="fourth")
-            b-field.column(label="結び句" horizontal :type="returnFieldTypeFive"  :message="{'音の数が多いです': returnFieldTypeFive}")
+            b-field.column(label="結び句" horizontal ,:type="returnFieldTypeFive" ,:message="{'音の数が多いです': returnFieldTypeFive}")
                 b-input(type="text" v-model="fifthSong" maxlength="7" @blur="fifth")
 
     .button-parent
-            button#download.button.is-info.button-style(ref="download" @click="checkbtn") 画像をダウンロード
+            button#download.button.is-info.button-style(@click="downloadBtn") 画像をダウンロード
 </template>
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
@@ -214,7 +214,7 @@ export default class WriteArea extends Vue {
             return '';
         }
     }
-    private checkbtn() {
+    private downloadBtn() {
         if (this.canvas === null) {
             return;
         }
