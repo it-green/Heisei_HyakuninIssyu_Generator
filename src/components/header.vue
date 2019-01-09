@@ -12,11 +12,7 @@ interface Img {
     [key: string]: string; // キーが文字列、でvalueも文字列と型定義
 }
 @Component
-export default class Header extends Vue {
-    // private img: Img = {
-    //     'service-icon': require('../assets/mainVisual.jpg'),
-    // };
-}
+export default class Header extends Vue {}
 </script>
 
 <style lang="sass">
