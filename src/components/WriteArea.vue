@@ -2,7 +2,6 @@
 .vue-write-area
     .sheetArea
         canvas.canvas-style(ref="canvas")
-
     //- 上の句を書き込むエリア
     .forms
         p.title 上の句
