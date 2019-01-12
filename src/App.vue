@@ -1,8 +1,8 @@
 <template lang="pug">
-    #app
-        Header
-        WriteArea.writeArea-style
-        Footer
+#app
+    Header
+    WriteArea.writeArea-style
+    Footer
 </template>
 
 <script lang="ts">
