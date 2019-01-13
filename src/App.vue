@@ -1,8 +1,10 @@
 <template lang="pug">
 #app
     Header
-    WriteArea.writeArea-style
+    router-link(to='/')
+    router-view
     Footer
+
 </template>
 
 <script lang="ts">

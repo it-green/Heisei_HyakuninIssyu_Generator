@@ -20,7 +20,7 @@
     //- 上の句を書き込むエリア
     .forms
         p.title 上の句
-        .columns
+        div.columns
             b-field.column(label="初句" horizontal)
                 b-input(type="text" v-model="firstSong"  maxlength="5")
             b-field.column(label="二句" horizontal)
@@ -29,7 +29,7 @@
                 b-input(type="text" v-model="thirdSong" maxlength="5")
         p.title 下の句
         //- 下の句を書き込むエリア
-        .columns
+        div.columns
             b-field.column(label="四句" horizontal)
                 b-input(type="text" v-model="fourthSong" maxlength="7")
             b-field.column(label="結び句" horizontal)
@@ -55,7 +55,7 @@ export default class WriteArea extends Vue {
     // canvasに使うデータの用意
     private canvas: HTMLCanvasElement | null = null;
     private ctx: CanvasRenderingContext2D | null = null;
-    private pinkSheet: HTMLImageElement | null = null;
+    private blueSheet: HTMLImageElement | null = null;
     private ctxFirstSong: CanvasRenderingContext2D | null = null;
     private ctxSecondSong: CanvasRenderingContext2D | null = null;
     private ctxThirdSong: CanvasRenderingContext2D | null = null;
@@ -66,15 +66,15 @@ export default class WriteArea extends Vue {
 
     // 画像を読み込む
     private sheets: Img = {
-        'pink-sheet': require('../assets/sheets/pink.png'),
+        'blue-sheet': require('../assets/sheets/blue.png'),
     };
 
     // 画像を描画する。
-    private drawPinkSheet() {
-        if (this.ctx === null || this.pinkSheet === null) {
+    private drawBlueSheet() {
+        if (this.ctx === null || this.blueSheet === null) {
             return;
         }
-        this.ctx.drawImage(this.pinkSheet, 0, 0);
+        this.ctx.drawImage(this.blueSheet, 0, 0);
     }
     // 短歌をcanvasに描画する。
     private drawCanvasFirstSong() {
@@ -141,20 +141,20 @@ export default class WriteArea extends Vue {
         this.ctxFourthSong = this.canvas.getContext('2d');
         this.ctxFifthSong = this.canvas.getContext('2d');
 
-        this.pinkSheet = new Image();
+        this.blueSheet = new Image();
 
-        this.pinkSheet.onload = () => {
-            if (this.ctx === null || this.pinkSheet === null) {
+        this.blueSheet.onload = () => {
+            if (this.ctx === null || this.blueSheet === null) {
                 return;
             }
-            this.drawPinkSheet();
+            this.drawBlueSheet();
             this.drawCanvasFirstSong();
             this.drawCanvasSecondSong();
             this.drawCanvasThirdSong();
             this.drawCanvasFourthSong();
             this.drawCanvasFifthSong();
         };
-        this.pinkSheet.src = this.sheets['pink-sheet'];
+        this.blueSheet.src = this.sheets['blue-sheet'];
     }
     @Watch('firstSong')
     @Watch('secondSong')
@@ -162,7 +162,7 @@ export default class WriteArea extends Vue {
     @Watch('fourthSong')
     @Watch('fifthSong')
         private rewrite() {
-            this.drawPinkSheet();
+            this.drawBlueSheet();
             this.drawCanvasFirstSong();
             this.drawCanvasSecondSong();
             this.drawCanvasThirdSong();
