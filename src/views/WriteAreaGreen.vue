@@ -8,15 +8,15 @@
                 span シートのカラーを変える
                 b-icon(icon="menu-down")
             b-dropdown-item
-                router-link(to="/") ピンク
+                router-link(to="/" replace) ピンク
             b-dropdown-item
-                router-link(to="orange") オレンジ
+                router-link(to="orange" replace) オレンジ
             b-dropdown-item
-                router-link(to="blue") ブルー
+                router-link(to="blue" replace) ブルー
             b-dropdown-item
-                router-link(to="/green") グリーン
+                router-link(to="/green" replace) グリーン
             b-dropdown-item
-                router-link(to="/purple") パープル
+                router-link(to="/purple" replace) パープル
     //- 上の句を書き込むエリア
     .forms
         p.title 上の句
